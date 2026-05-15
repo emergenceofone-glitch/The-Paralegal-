@@ -7,6 +7,8 @@ import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
+  Image,
+  Map,
   Activity, 
   ShieldCheck, 
   FileText, 
@@ -89,6 +91,7 @@ echo "Ready for May 14th Anchor."`,
   });
 
   const [sidebarOpen, setSidebarOpen] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
+  const [showBlueprint, setShowBlueprint] = useState(false);
 
   useEffect(() => {
     let prevWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
@@ -204,6 +207,25 @@ echo "Ready for May 14th Anchor."`,
                   <p className="text-[10px] font-mono text-neutral-400 leading-tight">
                     {state.bottlenecks}
                   </p>
+                </div>
+              </div>
+
+              <div className="px-6 mb-6">
+                <span className="data-grid-header block mb-2">System Assets</span>
+                <div className="space-y-1">
+                  <button 
+                    onClick={() => setShowBlueprint(true)}
+                    className="flex w-full items-center gap-2 p-2 rounded hover:bg-neutral-900 group transition-colors"
+                  >
+                    <Image className="w-3.5 h-3.5 text-neutral-500 group-hover:text-accent" />
+                    <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-tight group-hover:text-neutral-200">ObservX_Blueprint.png</span>
+                    <div className="flex-1" />
+                    <ChevronRight className="w-3 h-3 text-neutral-700" />
+                  </button>
+                  <button className="flex w-full items-center gap-2 p-2 rounded hover:bg-neutral-900 group transition-colors opacity-50 cursor-not-allowed">
+                    <Map className="w-3.5 h-3.5 text-neutral-500" />
+                    <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-tight">Geo_Vector_Map (Locked)</span>
+                  </button>
                 </div>
               </div>
 
@@ -454,6 +476,57 @@ echo "Ready for May 14th Anchor."`,
           </div>
         </footer>
       </main>
+
+      {/* Blueprint Viewer Modal */}
+      <AnimatePresence>
+        {showBlueprint && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative max-w-5xl w-full bg-[#0D0D0D] border border-neutral-800 rounded-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            >
+              <div className="h-12 flex items-center justify-between px-6 border-b border-neutral-800 bg-neutral-950">
+                <div className="flex items-center gap-3">
+                  <Image className="w-4 h-4 text-accent" />
+                  <span className="text-xs font-mono font-bold tracking-widest uppercase">System Schematic: ObservX Blueprint</span>
+                </div>
+                <button 
+                  onClick={() => setShowBlueprint(false)}
+                  className="p-1 hover:bg-neutral-800 rounded transition-colors text-neutral-500"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-auto bg-black p-4 flex items-center justify-center">
+                <div className="bg-neutral-900/20 p-2 border border-neutral-800 rounded-lg">
+                  {/* The image provided by the user. Using placeholder-style approach as we don't have the local path yet */}
+                  {/* In a real scenario, the uploaded file would be at /src/assets/blueprint.png */}
+                  <img 
+                    src="https://raw.githubusercontent.com/The-Paralegal-/The-Paralegal-/refs/heads/main/public/assets/blueprint.png" 
+                    alt="ObservX Blueprint" 
+                    className="max-w-full h-auto rounded-md shadow-2xl"
+                    referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=2074&auto=format&fit=crop';
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="h-10 px-6 border-t border-neutral-800 bg-neutral-950 flex items-center justify-between">
+                <span className="text-[10px] font-mono text-neutral-600 uppercase">File Info: 1920x1080 | PNG | 2.4MB</span>
+                <span className="text-[10px] font-mono text-neutral-600 uppercase italic">Classification: EYES ONLY</span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
