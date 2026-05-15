@@ -88,7 +88,22 @@ echo "Ready for May 14th Anchor."`,
     history: []
   });
 
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
+
+  useEffect(() => {
+    let prevWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+    const handleResize = () => {
+      const currWidth = window.innerWidth;
+      if (currWidth < 1024 && prevWidth >= 1024) {
+        setSidebarOpen(false);
+      } else if (currWidth >= 1024 && prevWidth < 1024) {
+        setSidebarOpen(true);
+      }
+      prevWidth = currWidth;
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleTransmit = async () => {
     if (!state.raw.trim()) return;
@@ -130,7 +145,7 @@ echo "Ready for May 14th Anchor."`,
   };
 
   return (
-    <div className="flex h-screen w-full overflow-hidden font-sans">
+    <div className="flex h-[100dvh] w-full overflow-hidden font-sans">
       {/* Sidebar */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -138,7 +153,7 @@ echo "Ready for May 14th Anchor."`,
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: 300, opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
-            className="h-full bg-[#080808] border-r border-[#1a1a1a] flex flex-col z-20"
+            className="absolute left-0 top-0 lg:relative h-full bg-[#080808] border-r border-[#1a1a1a] flex flex-col z-20 shadow-2xl lg:shadow-none"
           >
             <div className="p-6 border-b border-[#1a1a1a] flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -262,7 +277,7 @@ echo "Ready for May 14th Anchor."`,
         </header>
 
         {/* Workspace Panels */}
-        <div className="flex-1 overflow-hidden grid grid-cols-1 lg:grid-cols-2">
+        <div className="flex-1 overflow-hidden grid grid-rows-2 grid-cols-1 lg:grid-cols-2 lg:grid-rows-1">
           {/* Left: Input Panel */}
           <div className="border-r border-[#1a1a1a] flex flex-col overflow-hidden bg-[#0a0a0a]">
             <div className="h-10 flex items-center justify-between px-4 border-b border-[#1a1a1a] bg-neutral-900/30">
