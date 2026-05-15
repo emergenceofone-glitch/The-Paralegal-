@@ -38,15 +38,47 @@ interface TelemetryState {
 
 export default function App() {
   const [state, setState] = useState<TelemetryState>({
-    raw: `TELEMETRY_PACKET_0x44:
-{
-  "git_log": "commit a92b3c Update core infrastructure logic",
-  "node_version": "v16.14.0",
-  "npm_version": "v8.19.4",
-  "phi_stability": 0.94,
-  "bottlenecks": ["Erratic Φ values in narrative-to-code strand"],
-  "compliance": "Master Foundation v1.2"
-}`,
+    raw: `#!/bin/bash
+# ==========================================================
+# THE PARALEGAL: PROJECT SYNC & VERIFICATION (V.2026.05)
+# Target: Nephilim Vector Payload (May 14 Anchor)
+# ==========================================================
+
+# 1. DEFINE ORIGINS (Update these paths to your actual mount points)
+LOCAL_MASTER="/home/adrian/projects/emergence_core"
+CLOUD_SYNC_POINT="/home/adrian/cloud/backups/emergence"
+GH_REPO_DIR="/home/adrian/github/emergence"
+MANIFEST_FILE="$LOCAL_MASTER/logs/manifest_$(date +%Y%m%d).sha256"
+
+echo "[Paralegal] Initializing Pre-Flight Audit..."
+
+# 2. GENERATE MASTER INTEGRITY SIGNATURE
+# Creates a checksum of all source material in the master directory.
+echo "[Paralegal] Calculating Master Checksums..."
+find "$LOCAL_MASTER" -type f -not -path '*/.*' -exec sha256sum {} + > "$MANIFEST_FILE"
+
+# 3. VERIFY LOCAL-TO-CLOUD PARITY
+# Ensures your cloud backups match the local 'Anti Gravity' origin.
+echo "[Paralegal] Verifying Cloud Parity..."
+rsync -avz --checksum --dry-run "$LOCAL_MASTER/" "$CLOUD_SYNC_POINT/" | grep -E '^deleting|[^/]$'
+
+# 4. GITHUB REPOSITORY ALIGNMENT
+# Checks if the GitHub 'archive' folder is out of sync with your local edits.
+echo "[Paralegal] Auditing Repository State..."
+cd "$GH_REPO_DIR" || exit
+git fetch origin
+STATUS=$(git status -uno)
+
+if [[ $STATUS == *"Your branch is up to date"* ]]; then
+    echo "[Paralegal] Repository is ALIGNED with origin."
+else
+    echo "[Paralegal] WARNING: Repository DRIFT detected. Manual push required."
+fi
+
+# 5. FINAL MANIFEST REPORT
+echo "[Paralegal] Audit Complete."
+echo "Master Manifest stored at: $MANIFEST_FILE"
+echo "Ready for May 14th Anchor."`,
     auditOutput: '',
     isProcessing: false,
     status: 'IDLE',
